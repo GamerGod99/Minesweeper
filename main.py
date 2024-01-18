@@ -98,12 +98,6 @@ class Minesweeper:
 
         return plane
 
-    # def print_plane(self):
-    #     for row in range(SIZE_Y):
-    #         for column in range(SIZE_X):
-    #             print(plane[row][column], end=' ')
-    #         print()
-
     def check_tile(self, column: int = 0, row: int = 0) -> int:
         if 0 <= column < SIZE_Y and 0 <= row < SIZE_X:
             return plane[row][column].val
