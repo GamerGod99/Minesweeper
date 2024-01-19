@@ -104,24 +104,41 @@ class Minesweeper:
         else:
             return -1
 
-    def uncover_on_start(self, y, x):
-        if 0 <= y < SIZE_Y and 0 <= x < SIZE_X:
+    def game_over(self, picked_y, picked_x):
+        # timer.stop()
+        # disallow clicking
+        # summary
+        self.plane[picked_y][picked_x].state = Tile.DETONATED
+        for y in range(self.size_y):
+            for x in range(self.size_x):
+                tile = self.plane[y][x]
+                if tile.val == Tile.MINE:
+                    if tile.state == tile.COVERED:
+                        tile.state = Tile.UNCOVERED
+                else:
+                    if tile.state == Tile.FLAGGED:
+                        tile.state = Tile.NO_MINE
+        return False
 
-            tile = plane[y][x]
+    def uncover_on_start(self, y, x):
+        game_running = True
+        if 0 <= y < self.size_y and 0 <= x < self.size_x:
+
+            tile = self.plane[y][x]
             if tile.state == Tile.COVERED:
                 if tile.val == 0:
                     tile.state = Tile.UNCOVERED
-                    for step_y, step_x in around:
-                        uncover_on_start(y + step_y, x + step_x)
+                    for step_y, step_x in Minesweeper.around:
+                        self.uncover_on_start(y + step_y, x + step_x)
                 elif tile.val == 9:
-                    pass  # GAME OVER
+                    game_running = self.game_over(y, x)
                 else:
                     tile.state = Tile.UNCOVERED
-        pass
+        return game_running
 
 
 def print_plant(m):
-    pass
+    print('\n' + '\n'.join('\t' + ' '.join(str(tile.val if tile.val < 9 else '*') for tile in row) for row in m.plane) + '\n')
 
 
 if __name__ == '__main__':
@@ -144,5 +161,9 @@ if __name__ == '__main__':
 
         user_x = int(user_x)
         user_y = int(user_y)
-        print(uncover_on_start(user_x, user_y))
-        print_plane()
+        if ms.uncover_on_start(user_y, user_x):
+            print(ms)
+        else:
+            print(ms)
+            break
+
