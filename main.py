@@ -98,13 +98,13 @@ class Minesweeper:
 
         return plane
 
-    def check_tile(self, column: int = 0, row: int = 0) -> int:
-        if 0 <= column < SIZE_Y and 0 <= row < SIZE_X:
-            return plane[row][column].val
-        else:
-            return -1
+    # def check_tile(self, column: int = 0, row: int = 0) -> int:
+    #     if 0 <= column < SIZE_Y and 0 <= row < SIZE_X:
+    #         return plane[row][column].val
+    #     else:
+    #         return -1
 
-    def game_over(self, picked_y, picked_x):
+    def game_over_check(self, picked_y, picked_x):
         # timer.stop()
         # disallow clicking
         # summary
@@ -120,7 +120,31 @@ class Minesweeper:
                         tile.state = Tile.NO_MINE
         return False
 
-    def uncover_on_start(self, y, x):
+    def action(self, y, x, button):
+
+        game_running = True
+        tile = self.plane[y][x]
+
+        if button == 0:  # 0 = lmb
+            if tile.state == Tile.COVERED:
+                game_running = self.uncover(y, x)
+
+            elif tile.state == Tile.UNCOVERED:
+                pass
+            elif tile.state == Tile.FLAGGED:
+                pass
+
+        elif button == 1:  # 1 = rmb
+            if tile.state == Tile.COVERED:
+                tile.state = Tile.FLAGGED
+            elif tile.state == Tile.UNCOVERED:
+                pass
+            elif tile.state == Tile.FLAGGED:
+                tile.state = Tile.COVERED
+
+        return game_running
+
+    def uncover(self, y, x):
         game_running = True
         if 0 <= y < self.size_y and 0 <= x < self.size_x:
 
@@ -129,9 +153,9 @@ class Minesweeper:
                 if tile.val == 0:
                     tile.state = Tile.UNCOVERED
                     for step_y, step_x in Minesweeper.around:
-                        self.uncover_on_start(y + step_y, x + step_x)
+                        self.uncover(y + step_y, x + step_x)
                 elif tile.val == 9:
-                    game_running = self.game_over(y, x)
+                    game_running = self.game_over_check(y, x)
                 else:
                     tile.state = Tile.UNCOVERED
         return game_running
@@ -143,27 +167,25 @@ def print_plant(m):
 
 if __name__ == '__main__':
 
-    # plant_mines()
-    # plant_numbers()
-    # print_plane()
-    # print()
-
-    ms = Minesweeper(10, 10, 15)
+    ms = Minesweeper(4, 4, 2)
     print_plant(ms)
     print(ms)
 
     # GAME LOOP
     while True:
-        user_x = input('Enter x coordinate: ')
-        if user_x == '': break
         user_y = input('Enter y coordinate: ')
         if user_y == '': break
+        user_x = input('Enter x coordinate: ')
+        if user_x == '': break
+        user_action = input('Enter action [0 for lmb, 1 for rmb]: ')
+        if user_action == '': break
 
         user_x = int(user_x)
         user_y = int(user_y)
-        if ms.uncover_on_start(user_y, user_x):
+        user_action = int(user_action)
+        if ms.action(user_y, user_x, user_action):
+
             print(ms)
         else:
             print(ms)
             break
-
