@@ -167,12 +167,21 @@ def print_plant(m):
 
 if __name__ == '__main__':
 
-    ms = Minesweeper(4, 4, 2)
+    size_x = input("Enter minefield width: ")
+    size_y = input("Enter minefield height: ")
+    mine_amount = input("Enter mine amount: ")
+
+    size_x = int(size_x)
+    size_y = int(size_y)
+    mine_amount = int(mine_amount)
+
+    ms = Minesweeper(size_x, size_y, mine_amount)
     print_plant(ms)
     print(ms)
 
     # GAME LOOP
     while True:
+
         user_y = input('Enter y coordinate: ')
         if user_y == '': break
         user_x = input('Enter x coordinate: ')
