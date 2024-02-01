@@ -14,8 +14,8 @@ IMG = {
     'n9': '*',
     'explosion': '#',
     'no_mine': 'X',
-    'covered': '-',
-    'flagged': '!'
+    'covered': '■',
+    'flagged': '⚑'
 
 }
 
@@ -62,6 +62,7 @@ class Minesweeper:
         self.size_x = size_x
         self.size_y = size_y
         self.mine_amount = mine_amount
+        self.flag_amount = mine_amount
         self.plane = self.__plant()
 
     def __repr__(self):
@@ -137,10 +138,12 @@ class Minesweeper:
         elif button == 1:  # 1 = rmb
             if tile.state == Tile.COVERED:
                 tile.state = Tile.FLAGGED
+                self.flag_amount -= 1
             elif tile.state == Tile.UNCOVERED:
                 pass
             elif tile.state == Tile.FLAGGED:
                 tile.state = Tile.COVERED
+                self.flag_amount += 1
 
         return game_running
 
@@ -177,6 +180,7 @@ if __name__ == '__main__':
 
     ms = Minesweeper(size_x, size_y, mine_amount)
     print_plant(ms)
+    print(f'Flags: {ms.flag_amount}')
     print(ms)
 
     # GAME LOOP
@@ -192,8 +196,10 @@ if __name__ == '__main__':
         user_x = int(user_x)
         user_y = int(user_y)
         user_action = int(user_action)
+
         if ms.action(user_y, user_x, user_action):
 
+            print(f'Flags: {ms.flag_amount}')
             print(ms)
         else:
             print(ms)
